@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Effort-AIGI Deepfake Detector",
+  "version": "2.0.0",
+  "description": "Real-time deepfake detection for YouTube videos using AI ensemble models with frame-by-frame analysis",
+  "icons": {
+    "16": "icons/icon48.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon48.png"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://www.youtu.be/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://www.youtu.be/*"
+      ],
+      "js": ["content_script.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_title": "Effort-AIGI Deepfake Detector",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

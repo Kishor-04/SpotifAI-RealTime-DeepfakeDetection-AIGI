@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Effort-AIGI Deepfake Detector</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-section">
+      <div class="shield-icon">🛡️</div>
+      <div class="title-section">
+        <h1>Effort-AIGI</h1>
+        <p>Deepfake Detection System</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Connection Status Card -->
+    <div class="status-card">
+      <div class="status-header">
+        <div class="status-indicator-wrapper">
+          <div class="status-indicator" id="server-status"></div>
+          <span class="status-text" id="connection-status">Checking...</span>
+        </div>
+      </div>
+      <div class="server-info">
+        <span class="server-label">WebSocket Server</span>
+        <span class="server-address">ws://127.0.0.1:8765</span>
+      </div>
+    </div>
+
+    <!-- Detection Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <div class="stat-label">Ensemble Models</div>
+          <div class="stat-value">3 Active</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-content">
+          <div class="stat-label">Analysis Rate</div>
+          <div class="stat-value">1 FPS</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-content">
+          <div class="stat-label">Verdict Window</div>
+          <div class="stat-value">10 seconds</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👤</div>
+        <div class="stat-content">
+          <div class="stat-label">Face Alignment</div>
+          <div class="stat-value">68-Point</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-card">
+      <h3 class="section-title">🎯 Detection Features</h3>
+      <ul class="feature-list">
+        <li>
+          <span class="check-icon">✓</span>
+          <span>Real-time frame-by-frame analysis</span>
+        </li>
+        <li>
+          <span class="check-icon">✓</span>
+          <span>Face detection with bounding boxes</span>
+        </li>
+        <li>
+          <span class="check-icon">✓</span>
+          <span>Majority voting ensemble inference</span>
+        </li>
+        <li>
+          <span class="check-icon">✓</span>
+          <span>10-second rolling verdict display</span>
+        </li>
+        <li>
+          <span class="check-icon">✓</span>
+          <span>Confidence boost for REAL predictions</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="btn btn-primary" id="open-youtube">
+        <span class="btn-icon">▶️</span>
+        <span>Open YouTube</span>
+      </button>
+      <button class="btn btn-secondary" id="open-settings">
+        <span class="btn-icon">⚙️</span>
+        <span>Settings</span>
+      </button>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions-card">
+      <h3 class="section-title">📖 Quick Start Guide</h3>
+      <ol class="instructions-list">
+        <li>
+          <span class="step-number">1</span>
+          <span>Start the server with ensemble models using the command line</span>
+        </li>
+        <li>
+          <span class="step-number">2</span>
+          <span>Open any YouTube video</span>
+        </li>
+        <li>
+          <span class="step-number">3</span>
+          <span>Click the floating badge to start/stop detection</span>
+        </li>
+        <li>
+          <span class="step-number">4</span>
+          <span>View real-time analysis with 10-second verdicts</span>
+        </li>
+      </ol>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <div class="footer-content">
+      <span>Effort-AIGI v2.0</span>
+      <span class="separator">•</span>
+      <span>DeepfakeBench Framework</span>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

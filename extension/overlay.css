@@ -1,0 +1,44 @@
+/* overlay.css - Effort-AIGI professional styling */
+#df-overlay {
+  position: fixed;
+  right: 12px;
+  bottom: 72px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  z-index: 999999;
+}
+
+.df-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: grab;
+  transition: background 0.2s ease-in-out, transform 0.2s ease-in-out;
+  user-select: none;
+}
+
+.df-badge:active {
+  cursor: grabbing;
+}
+
+.df-badge:hover {
+  background: rgba(0, 0, 0, 0.85);
+  transform: scale(1.05);
+}
+
+.df-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: gray;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+.df-text {
+  font-size: 14px;
+  font-weight: 500;
+  text-shadow: 0 0 3px black;
+}

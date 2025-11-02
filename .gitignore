@@ -1,0 +1,356 @@
+# ============================================================================
+# Effort-AIGI Deepfake Detection - .gitignore
+# ============================================================================
+
+# ============================================================================
+# Python
+# ============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Virtual Environments
+venv/
+venv39/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ============================================================================
+# PyTorch / Deep Learning
+# ============================================================================
+# Model weights (large files)
+*.pth
+*.pt
+*.ckpt
+*.h5
+*.hdf5
+*.pb
+*.onnx
+
+# Specific model weights folders
+DeepfakeBench/training/weights/*.pth
+DeepfakeBench/training/weights/*.pt
+DeepfakeBench/training/weights/*.ckpt
+
+# Keep only if you want to track small test models
+# !*test*.pth
+
+# Training outputs
+runs/
+lightning_logs/
+mlruns/
+checkpoints/
+*.tfevents.*
+
+# ============================================================================
+# Preprocessing / Face Detection
+# ============================================================================
+# dlib landmark models (large binary files)
+*.dat
+*.dat.bz2
+
+# Specific landmark model files
+DeepfakeBench/preprocessing/shape_predictor_68_face_landmarks.dat
+DeepfakeBench/preprocessing/shape_predictor_81_face_landmarks.dat
+DeepfakeBench/preprocessing/*.dat
+DeepfakeBench/preprocessing/*.dat.bz2
+
+# Preprocessed face images
+DeepfakeBench/saves_pipeline/preprocessed_faces/*/
+saves_pipeline/preprocessed_faces/*/
+preprocessed_faces/
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tiff
+
+# Keep example images/icons
+!extension/icons/*.png
+!figs/*.png
+!figs/*.jpg
+
+# Video files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.flv
+*.wmv
+*.webm
+
+# ============================================================================
+# Dataset Files
+# ============================================================================
+# Large dataset files
+datasets/
+data/raw/
+data/processed/
+*.csv
+*.tsv
+*.json
+
+# Keep configuration JSON files
+!DeepfakeBench/preprocessing/dataset_json/*.json
+!DeepfakeBench/training/config/**/*.json
+!extension/manifest.json
+
+# ============================================================================
+# IDE / Editors
+# ============================================================================
+# VS Code
+.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# ============================================================================
+# Operating System
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+.directory
+.Trash-*
+.nfs*
+
+# ============================================================================
+# Environment / Secrets
+# ============================================================================
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+credentials/
+
+# ============================================================================
+# Logs / Debugging
+# ============================================================================
+*.log
+logs/
+*.out
+*.err
+*.pid
+*.seed
+*.pid.lock
+
+# ============================================================================
+# Temporary Files
+# ============================================================================
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*.swo
+
+# ============================================================================
+# Build / Compiled
+# ============================================================================
+*.o
+*.obj
+*.exe
+*.dll
+*.dylib
+*.so
+*.class
+
+# ============================================================================
+# Browser Extension Development
+# ============================================================================
+# Extension package files
+*.crx
+*.xpi
+*.zip
+
+# Extension build outputs
+extension/build/
+extension/dist/
+node_modules/
+
+# ============================================================================
+# Documentation
+# ============================================================================
+# Keep README but ignore generated docs
+docs/_build/
+site/
+*.pdf
+
+# ============================================================================
+# Notebooks / Analysis
+# ============================================================================
+# Jupyter outputs
+*.ipynb_checkpoints/
+
+# Analysis results
+analysis/results/
+analysis/plots/
+*.pkl
+*.pickle
+
+# ============================================================================
+# Git / Version Control
+# ============================================================================
+*.orig
+*.rej
+.git/
+.gitattributes
+
+# ============================================================================
+# Compression / Archives
+# ============================================================================
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.bz2
+*.gz
+
+# Keep important archives if needed
+# !important_data.zip
+
+# ============================================================================
+# Benchmarking / Results
+# ============================================================================
+UniversalFakeDetect_Benchmark/results/*/
+results/
+benchmarks/
+experiments/
+
+# Keep result summaries
+!results/summary.txt
+!results/README.md
+
+# ============================================================================
+# CUDA / GPU
+# ============================================================================
+*.cu.o
+*.cuda
+*.cubin
+*.fatbin
+*.ptx
+
+# ============================================================================
+# Custom Project Specific
+# ============================================================================
+# Downloaded model archives
+*.tar.xz
+*.tar.bz2
+
+# Face detection temporary files
+face_temp/
+aligned_faces/
+
+# Server runtime files
+*.sock
+*.pid
+websocket.log
+
+# Test outputs
+test_outputs/
+debug_images/
+debug_videos/
+
+# Cache directories
+.cache/
+cache/
+
+# ============================================================================
+# Optional: Uncomment if you want to track specific files
+# ============================================================================
+# !DeepfakeBench/training/weights/README.md
+# !DeepfakeBench/preprocessing/README.md
