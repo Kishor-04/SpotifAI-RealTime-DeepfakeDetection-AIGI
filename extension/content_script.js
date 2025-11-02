@@ -886,4 +886,4 @@ if (document.querySelector('video')) {
   });
 }
 
-console.log('[DF EXT] 🎬 Real-time Deepfake Detector loaded - ready to display backend results!');
+console.log('[DF EXT] 🎬 SpotifAI Detector loaded - ready to display backend results!');

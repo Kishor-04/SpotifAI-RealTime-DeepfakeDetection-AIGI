@@ -1,4 +1,4 @@
-// background.js - Service worker for Real-time Deepfake Detector extension
+// background.js - Service worker for SpotifAI extension
 // Handles communication between popup and content script
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
@@ -28,7 +28,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 // Log extension installation
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install') {
-    console.log('[DF EXT] 🎉 Real-time Deepfake Detector installed successfully!');
+    console.log('[DF EXT] 🎉 SpotifAI installed successfully!');
     console.log('[DF EXT] 📋 Next steps:');
     console.log('[DF EXT]   1. Start the detection server: python -m native_host.server --ensemble');
     console.log('[DF EXT]   2. Open a YouTube video');

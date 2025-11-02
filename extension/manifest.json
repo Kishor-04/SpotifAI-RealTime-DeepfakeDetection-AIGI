@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Real-time Deepfake Detector",
+  "name": "SpotifAI - Deepfake Detector",
   "version": "2.0.0",
   "description": "Real-time deepfake detection for YouTube videos using AI ensemble models with frame-by-frame analysis",
   "icons": {
@@ -29,7 +29,7 @@
     }
   ],
   "action": {
-    "default_title": "Real-time Deepfake Detector",
+    "default_title": "SpotifAI - Deepfake Detector",
     "default_popup": "popup.html"
   },
   "background": {
