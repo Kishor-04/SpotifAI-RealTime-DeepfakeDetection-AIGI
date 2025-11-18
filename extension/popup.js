@@ -5,7 +5,7 @@ let currentTab = null;
 
 // Elements
 const openYoutubeBtn = document.getElementById('open-youtube');
-const openSettingsBtn = document.getElementById('open-settings');
+const linkAccountBtn = document.getElementById('link-account');
 const serverStatus = document.getElementById('server-status');
 const connectionStatus = document.getElementById('connection-status');
 
@@ -36,6 +36,16 @@ async function init() {
       }
     });
   }
+  
+  // Load saved token if exists
+  chrome.storage.local.get(['extension_token', 'extension_user'], (result) => {
+    if (result.extension_token && result.extension_user) {
+      // Update button to show linked state
+      linkAccountBtn.innerHTML = '<span class="btn-icon">✓</span><span>Account Linked</span>';
+      linkAccountBtn.classList.remove('btn-secondary');
+      linkAccountBtn.classList.add('btn-success');
+    }
+  });
 }
 
 // Open YouTube
@@ -44,10 +54,28 @@ openYoutubeBtn.addEventListener('click', () => {
   window.close();
 });
 
-// Open Settings (placeholder for future feature)
-openSettingsBtn.addEventListener('click', () => {
-  // For now, just show an alert - can be expanded later
-  alert('Settings feature coming soon!\n\nCurrent Configuration:\n Frame Rate: 1 FPS\n Verdict Window: 10 seconds\n Models: 3 Ensemble\n Face Alignment: 68-point landmarks');
+// Open Settings Page in new tab
+linkAccountBtn.addEventListener('click', () => {
+  chrome.tabs.create({ url: chrome.runtime.getURL('settings.html') });
+  window.close();
+});
+
+// Listen for storage changes to update UI when token is saved in settings
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === 'local' && (changes.extension_token || changes.extension_user)) {
+    const hasToken = changes.extension_token && changes.extension_token.newValue;
+    const hasUser = changes.extension_user && changes.extension_user.newValue;
+    
+    if (hasToken && hasUser) {
+      linkAccountBtn.innerHTML = '<span class="btn-icon">✓</span><span>Account Linked</span>';
+      linkAccountBtn.classList.remove('btn-secondary');
+      linkAccountBtn.classList.add('btn-success');
+    } else {
+      linkAccountBtn.innerHTML = '<span class="btn-icon">🔗</span><span>Link Account</span>';
+      linkAccountBtn.classList.remove('btn-success');
+      linkAccountBtn.classList.add('btn-secondary');
+    }
+  }
 });
 
 // Listen for updates from content script

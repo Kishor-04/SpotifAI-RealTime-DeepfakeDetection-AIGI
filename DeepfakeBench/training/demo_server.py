@@ -300,7 +300,8 @@ class DeepfakeDetectionServer:
             return None
 
         rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        faces = self.face_detector(rgb, 1)
+        # Changed upsample from 1 to 0 for faster detection (2x faster, slightly less accurate)
+        faces = self.face_detector(rgb, 0)
 
         if len(faces):
             face = max(faces, key=lambda rect: rect.width() * rect.height())

@@ -107,6 +107,8 @@ DeepfakeBench/preprocessing/*.dat.bz2
 # Preprocessed face images
 DeepfakeBench/saves_pipeline/preprocessed_faces/*/
 saves_pipeline/preprocessed_faces/*/
+saves_pipeline/
+saves_pipeline/*/
 preprocessed_faces/
 *.jpg
 *.jpeg
@@ -206,6 +208,7 @@ $RECYCLE.BIN/
 # Environment / Secrets
 # ============================================================================
 .env
+.env.*
 .env.local
 .env.*.local
 *.key
@@ -259,6 +262,46 @@ temp/
 extension/build/
 extension/dist/
 node_modules/
+
+# ============================================================================
+# Node.js / Frontend
+# ============================================================================
+# Dependencies
+node_modules/
+frontend/node_modules/
+extension/node_modules/
+jspm_packages/
+
+# Production builds
+frontend/dist/
+frontend/build/
+frontend/.next/
+frontend/out/
+
+# npm / yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Testing
+coverage/
+.nyc_output/
+
+# Cache
+.npm/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+
+# Misc
+.DS_Store
+*.local
+dist-ssr/
 
 # ============================================================================
 # Documentation
@@ -348,6 +391,42 @@ debug_videos/
 # Cache directories
 .cache/
 cache/
+
+# Media uploads
+backend/media/
+backend/media/uploads/
+media/
+media/uploads/
+
+# ============================================================================
+# Nginx
+# ============================================================================
+nginx/logs/
+nginx/*.log
+nginx/cache/
+nginx/tmp/
+
+# ============================================================================
+# Flask / Backend
+# ============================================================================
+# Instance folder
+instance/
+.webassets-cache
+
+# Flask session
+flask_session/
+
+# SQLAlchemy
+*.db
+*.sqlite
+*.sqlite3
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Redis dump
+dump.rdb
 
 # ============================================================================
 # Optional: Uncomment if you want to track specific files

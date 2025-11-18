@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SpotifAI - Settings</title>
+  <link rel="icon" type="image/png" href="icons/favicon.png">
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-section">
+      <img src="icons/favicon.png" alt="SpotifAI Logo" class="logo-image" style="width: 40px; height: 40px; border-radius: 8px;">
+      <div class="title-section">
+        <h1>SpotifAI Settings</h1>
+        <p>Account & Configuration</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Account Linking Section -->
+    <div class="settings-section">
+      <h3 class="section-title">
+        <span class="section-icon">🔗</span>
+        Account Linking
+      </h3>
+      
+      <div class="account-status-card" id="account-status-card">
+        <div class="status-row">
+          <span class="status-label">Status:</span>
+          <span class="status-value" id="link-status">Not Linked</span>
+        </div>
+        <div class="status-row" id="user-info-row" style="display: none;">
+          <span class="status-label">User:</span>
+          <span class="status-value" id="user-email">-</span>
+        </div>
+      </div>
+
+      <div class="token-input-section">
+        <label for="token-input" class="input-label">
+          <span>Extension Token</span>
+          <span class="input-hint">Get your token from the web dashboard Settings page</span>
+        </label>
+        <div class="input-group">
+          <input 
+            type="text" 
+            id="token-input" 
+            class="token-input" 
+            placeholder="Enter your extension token here..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button class="btn-icon-action" id="paste-btn" title="Paste from clipboard">
+            📋
+          </button>
+        </div>
+        
+        <div class="button-group">
+          <button class="btn btn-primary" id="link-btn">
+            <span class="btn-icon">🔗</span>
+            <span>Link Account</span>
+          </button>
+          <button class="btn btn-danger" id="unlink-btn" style="display: none;">
+            <span class="btn-icon">🔓</span>
+            <span>Unlink Account</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon">ℹ️</div>
+        <div class="info-content">
+          <strong>Why link your account?</strong>
+          <p>Linking your account allows the extension to sync detection sessions with your web dashboard, enabling you to:</p>
+          <ul>
+            <li>View all your detection history in one place</li>
+            <li>Access detailed analytics and reports</li>
+            <li>Track detection sessions across devices</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detection Settings Section -->
+    <div class="settings-section">
+      <h3 class="section-title">
+        <span class="section-icon">⚙️</span>
+        Detection Configuration
+      </h3>
+      
+      <div class="setting-item">
+        <div class="setting-header">
+          <span class="setting-label">Frame Analysis Rate</span>
+          <span class="setting-value">1 FPS</span>
+        </div>
+        <p class="setting-description">Frames analyzed per second during video playback</p>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-header">
+          <span class="setting-label">Verdict Window</span>
+          <span class="setting-value">10 seconds</span>
+        </div>
+        <p class="setting-description">Time window for aggregating frame predictions</p>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-header">
+          <span class="setting-label">Ensemble Models</span>
+          <span class="setting-value">3 Active</span>
+        </div>
+        <p class="setting-description">FaceForensics, SDv14, and Chameleon models</p>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-header">
+          <span class="setting-label">Face Detection</span>
+          <span class="setting-value">81-Point Landmarks</span>
+        </div>
+        <p class="setting-description">dlib-based face detection and alignment</p>
+      </div>
+    </div>
+
+    <!-- Server Settings Section -->
+    <div class="settings-section">
+      <h3 class="section-title">
+        <span class="section-icon">🌐</span>
+        Server Configuration
+      </h3>
+      
+      <div class="setting-item">
+        <div class="setting-header">
+          <span class="setting-label">WebSocket Server</span>
+          <span class="setting-value">ws://127.0.0.1:8765</span>
+        </div>
+        <p class="setting-description">Local inference server for deepfake detection</p>
+      </div>
+
+      <div class="setting-item">
+        <div class="setting-header">
+          <span class="setting-label">API Backend</span>
+          <span class="setting-value" id="api-url">http://localhost:5000</span>
+        </div>
+        <p class="setting-description">Backend API for account management and sync</p>
+      </div>
+    </div>
+
+    <!-- How to Get Token Section -->
+    <div class="settings-section">
+      <h3 class="section-title">
+        <span class="section-icon">📖</span>
+        How to Get Your Token
+      </h3>
+      
+      <ol class="steps-list">
+        <li>
+          <span class="step-number">1</span>
+          <div class="step-content">
+            <strong>Open Web Dashboard</strong>
+            <p>Navigate to <a href="http://localhost:5173" target="_blank">http://localhost:5173</a></p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number">2</span>
+          <div class="step-content">
+            <strong>Sign In or Sign Up</strong>
+            <p>Log in to your account or create a new one</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number">3</span>
+          <div class="step-content">
+            <strong>Go to Settings</strong>
+            <p>Click on "Settings" in the navigation menu</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number">4</span>
+          <div class="step-content">
+            <strong>Generate Token</strong>
+            <p>Click "Link Extension" to generate a token</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number">5</span>
+          <div class="step-content">
+            <strong>Copy & Paste</strong>
+            <p>Copy the token and paste it in the field above</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-content">
+      <button class="btn btn-secondary btn-small" id="back-btn">
+        <span class="btn-icon">←</span>
+        <span>Back to Popup</span>
+      </button>
+      <span class="version">SpotifAI v2.0</span>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="settings.js"></script>
+</body>
+</html>

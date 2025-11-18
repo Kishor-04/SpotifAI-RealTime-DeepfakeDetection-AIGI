@@ -46,7 +46,15 @@ class EffortDetector(nn.Module):
         # std: [0.26862954, 0.26130258, 0.27577711]
         
         # ViT-L/14 224*224
-        clip_model = CLIPModel.from_pretrained("openai/clip-vit-large-patch14")
+        # Load Large model (required for your weights)
+        print(f"Loading CLIP ViT-Large model (required for your weights)...")
+        print(f"This may take a few minutes on first download (~1.7 GB)...")
+        
+        clip_model = CLIPModel.from_pretrained(
+            "openai/clip-vit-large-patch14",
+            low_cpu_mem_usage=True,
+        )
+        
         # Apply SVD to self_attn layers only
         # ViT-L/14 224*224: 1024-1
         clip_model.vision_model = apply_svd_residual_to_self_attn(clip_model.vision_model, r=1024-1)

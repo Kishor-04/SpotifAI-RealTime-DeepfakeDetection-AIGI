@@ -7,11 +7,13 @@
 
 // --- CONFIGURATION ---
 const SERVER_URL = 'ws://127.0.0.1:8765';
+const BACKEND_API_URL = 'http://localhost:5000/api';
 const SAMPLE_FPS = 1;            
 const CAPTURE_WIDTH = 360;       // Reduced from 640 for faster transmission
 const CAPTURE_QUALITY = 0.65;    // Reduced from 0.75 for faster transmission
 const AGG_WINDOW_SEC = 10;       
 const VERDICT_DISPLAY_TIME = 5000;
+const SYNC_INTERVAL_MS = 30000;  // Sync every 30 seconds
 // Note: Backend applies 70% FAKE threshold and +15% confidence boost
 // Frontend only marks as SUSPICIOUS if confidence < 50% (very low)
 
@@ -19,6 +21,7 @@ const VERDICT_DISPLAY_TIME = 5000;
 let ws = null;
 let capturing = false;
 let captureInterval = null;
+let syncInterval = null;
 let videoEl = null;
 let overlayCanvas = null;
 let overlayCtx = null;
@@ -27,6 +30,7 @@ let lastVerdictTime = 0;
 let frameCounter = 0;
 let sessionStartTime = null;
 let lastProcessedSecond = -1;
+let pendingSyncData = [];  // Buffer for syncing to backend
 
 // Statistics
 let stats = {
@@ -36,6 +40,116 @@ let stats = {
   suspiciousFrames: 0,
   noFaceFrames: 0
 };
+
+// --- SYNC TO BACKEND ---
+async function syncToBackend() {
+  try {
+    // Get extension token from storage
+    const result = await chrome.storage.local.get(['extension_token', 'extension_user']);
+    
+    if (!result.extension_token) {
+      console.log('[DF EXT] 🔐 No extension token found - skipping sync. Link your account in extension settings.');
+      return;
+    }
+    
+    if (pendingSyncData.length === 0) {
+      console.log('[DF EXT] 📤 No new data to sync');
+      return;
+    }
+    
+    // Get video info
+    const videoUrl = window.location.href;
+    const videoId = new URLSearchParams(location.search).get('v') || 'unknown';
+    const videoTitle = document.querySelector('h1.ytd-video-primary-info-renderer')?.textContent?.trim() || 
+                      document.querySelector('h1.title')?.textContent?.trim() ||
+                      document.title || 
+                      'Unknown Video';
+    
+    // Prepare sync payload - ensure correct format
+    const syncPayload = {
+      extension_token: result.extension_token,
+      video_url: videoUrl,
+      video_title: videoTitle,
+      frames: pendingSyncData.map(frame => ({
+        frame_number: frame.frameNumber || 0,
+        timestamp: frame.timestamp || 0,
+        prediction: frame.prediction || 'UNKNOWN',
+        confidence: frame.confidence || 0,
+        bbox: frame.bbox || null  // Send as array or null
+      })),
+      session_stats: {
+        total_frames: stats.totalFrames,
+        fake_frames: stats.fakeFrames,
+        real_frames: stats.realFrames,
+        suspicious_frames: stats.suspiciousFrames,
+        no_face_frames: stats.noFaceFrames
+      }
+    };
+    
+    console.log(`[DF EXT] 📤 Syncing ${pendingSyncData.length} frames to backend...`);
+    console.log(`[DF EXT] 🎬 Video: ${videoTitle}`);
+    console.log(`[DF EXT] 📊 Stats: ${stats.totalFrames} total, ${stats.fakeFrames} fake, ${stats.realFrames} real`);
+    
+    const response = await fetch(`${BACKEND_API_URL}/extension/sync`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(syncPayload)
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log(`[DF EXT] ✅ Sync successful: ${data.message}`);
+      console.log(`[DF EXT] 📊 Session ID: ${data.session_id}, Frames synced: ${data.frames_synced}`);
+      
+      // Clear synced data
+      pendingSyncData = [];
+    } else {
+      const errorData = await response.json();
+      console.error('[DF EXT] ❌ Sync failed:', errorData.error || 'Unknown error');
+      console.error('[DF EXT] 📋 Response status:', response.status);
+      
+      // If token is invalid, clear it
+      if (response.status === 401 || response.status === 403) {
+        console.warn('[DF EXT] 🔐 Invalid token - clearing from storage');
+        await chrome.storage.local.remove(['extension_token', 'extension_user']);
+      }
+    }
+  } catch (error) {
+    console.error('[DF EXT] ❌ Sync error:', error);
+    console.error('[DF EXT] 📋 Error details:', error.message);
+  }
+}
+
+function startSyncInterval() {
+  if (syncInterval) return;
+  
+  // Sync immediately
+  syncToBackend();
+  
+  // Then sync every 30 seconds
+  syncInterval = setInterval(() => {
+    if (capturing && pendingSyncData.length > 0) {
+      syncToBackend();
+    }
+  }, SYNC_INTERVAL_MS);
+  
+  console.log('[DF EXT] 🔄 Auto-sync started (every 30s)');
+}
+
+function stopSyncInterval() {
+  if (syncInterval) {
+    clearInterval(syncInterval);
+    syncInterval = null;
+  }
+  
+  // Final sync before stopping
+  if (pendingSyncData.length > 0) {
+    console.log('[DF EXT] 📤 Final sync before stopping...');
+    syncToBackend();
+  }
+}
 
 // --- UI INJECTION ---
 function injectUI() {
@@ -532,6 +646,15 @@ function processResult(data) {
     slidingResults.push(result);
     while (slidingResults.length > 120) slidingResults.shift();
     
+    // Add NO_FACE frame to pending sync data
+    pendingSyncData.push({
+      frameNumber: stats.totalFrames,
+      timestamp: result.ts,
+      prediction: 'NO_FACE',
+      confidence: 0.0,
+      bbox: null
+    });
+    
     // Clear overlay (no face box to draw)
     clearOverlay();
     
@@ -559,6 +682,7 @@ function processResult(data) {
   };
   
   console.log(`[DF EXT] 📊 Frame ${stats.totalFrames + 1}: ${result.prediction} (${Math.round(result.confidence*100)}%)${result.votingInfo ? ' | ' + result.votingInfo : ''}`);
+  console.log(`[DF EXT] 📦 BBox data:`, result.bbox);
   
   // Update statistics
   stats.totalFrames++;
@@ -570,11 +694,22 @@ function processResult(data) {
   slidingResults.push(result);
   while (slidingResults.length > 120) slidingResults.shift();
   
+  // Add to pending sync data
+  pendingSyncData.push({
+    frameNumber: stats.totalFrames,
+    timestamp: result.ts,
+    prediction: result.prediction,
+    confidence: result.confidence,
+    bbox: result.bbox
+  });
+  
   // Draw face box with prediction
   if (result.bbox && videoEl) {
+    console.log(`[DF EXT] 🎨 Drawing bbox:`, result.bbox);
     createOverlayCanvas(videoEl);
     drawFaceBox(result.bbox, result.prediction, result.confidence);
   } else {
+    console.log(`[DF EXT] ⚠️ No bbox to draw - bbox:`, result.bbox, 'videoEl:', !!videoEl);
     clearOverlay();
   }
   
@@ -686,7 +821,8 @@ function captureAndSend() {
       id: `frame_${frameCounter}_${Date.now()}`,
       videoId: new URLSearchParams(location.search).get('v') || 'unknown',
       ts: currentSecond,
-      frameB64: dataUrl
+      frameB64: dataUrl,
+      source: 'extension'  // Mark as extension source
     };
     
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -741,7 +877,12 @@ function createOverlayCanvas(video) {
 }
 
 function drawFaceBox(bboxNorm, prediction, confidence) {
-  if (!overlayCtx || !bboxNorm || !videoEl) return;
+  if (!overlayCtx || !bboxNorm || !videoEl) {
+    console.log(`[DF EXT] ❌ Cannot draw bbox - overlayCtx:`, !!overlayCtx, 'bboxNorm:', bboxNorm, 'videoEl:', !!videoEl);
+    return;
+  }
+  
+  console.log(`[DF EXT] ✏️ Drawing face box with bbox:`, bboxNorm, 'prediction:', prediction);
   
   // Use requestAnimationFrame for smoother drawing
   requestAnimationFrame(() => {
@@ -824,13 +965,18 @@ function startCapture() {
   lastProcessedSecond = -1;
   stats = { totalFrames: 0, fakeFrames: 0, realFrames: 0, suspiciousFrames: 0, noFaceFrames: 0 };
   slidingResults = [];
+  pendingSyncData = [];
   lastVerdictTime = Math.floor(videoEl.currentTime || 0);
   
   updateBadge('ANALYZING');
   
   captureInterval = setInterval(captureAndSend, 100);
   
+  // Start auto-sync to backend
+  startSyncInterval();
+  
   console.log('[DF EXT] 🚀 Detection started - displaying backend ensemble voting results');
+  console.log('[DF EXT] 🔄 Auto-sync to backend enabled (every 30s)');
 }
 
 function stopCapture() {
@@ -840,6 +986,9 @@ function stopCapture() {
     clearInterval(captureInterval);
     captureInterval = null;
   }
+  
+  // Stop sync and do final sync
+  stopSyncInterval();
   
   if (ws) {
     ws.close();
@@ -867,8 +1016,23 @@ function toggleCapture() {
   else stopCapture();
 }
 
-// Expose toggleCapture globally for background.js
+// Expose functions globally for background.js and debugging
 window.toggleCapture = toggleCapture;
+window.debugExtensionSync = function() {
+  console.log('[DF EXT DEBUG] 🔍 Sync Status:');
+  console.log('  - Capturing:', capturing);
+  console.log('  - Pending frames:', pendingSyncData.length);
+  console.log('  - Total frames:', stats.totalFrames);
+  console.log('  - Sync interval active:', syncInterval !== null);
+  return {
+    capturing,
+    pendingFrames: pendingSyncData.length,
+    totalFrames: stats.totalFrames,
+    syncIntervalActive: syncInterval !== null,
+    stats: {...stats}
+  };
+};
+window.manualSync = syncToBackend;
 
 // --- INIT ---
 setTimeout(injectUI, 1200);

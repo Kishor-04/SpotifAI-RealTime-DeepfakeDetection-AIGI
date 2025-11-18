@@ -219,7 +219,8 @@ def detect_face_bbox_normalized(img_bgr: np.ndarray) -> Optional[list]:
         return None
     
     rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-    faces = server_instance.face_detector(rgb, 1)
+    # Changed upsample from 1 to 0 for faster detection (less accurate but much faster)
+    faces = server_instance.face_detector(rgb, 0)
     
     if not faces:
         return None
@@ -507,7 +508,13 @@ async def handler(ws):
                 timestamp = msg.get('ts', 0)
                 frame_b64 = msg.get('frameB64')
                 
-                print(f"\n📥 [DF SERVER] Received frame #{client_frame_count} (ID: {frame_id[:8]}...) from video {video_id} @ {timestamp}s")
+                # Get source flag and upload metadata
+                source = msg.get('source', 'extension')
+                current_frame = msg.get('currentFrame', 0)
+                total_frames = msg.get('totalFrames', 0)
+                video_duration = msg.get('videoDuration', 0)
+                
+                print(f"\n📥 [DF SERVER] Received frame #{client_frame_count} (ID: {frame_id[:8]}...) from {source} - video {video_id} @ {timestamp}s")
                 
                 if not frame_b64:
                     print(f"❌ [DF SERVER] No frame data provided")
@@ -610,9 +617,25 @@ async def handler(ws):
                     'confidence': final_confidence,
                     'models': results,
                     'bbox': bbox_norm,
-                    'voting_info': voting_info,  # Add voting info for frontend (includes conversion info)
-                    'saved_face_path': saved_face_path  # Include saved path in response
+                    'voting_info': voting_info,
+                    'saved_face_path': saved_face_path,
+                    'source': msg.get('source', 'extension')
                 }
+                
+                # Add progress info for web uploads
+                if source == 'web_upload' and total_frames > 0:
+                    progress_percent = (current_frame / total_frames) * 100
+                    current_second = int(timestamp)
+                    total_seconds = int(video_duration)
+                    
+                    resp['progress'] = progress_percent
+                    resp['currentFrame'] = current_frame
+                    resp['totalFrames'] = total_frames
+                    resp['currentSecond'] = current_second
+                    resp['totalSeconds'] = total_seconds
+                    resp['isComplete'] = current_frame >= total_frames
+                    
+                    print(f"   📊 Progress: {progress_percent:.1f}% ({current_second}s / {total_seconds}s)")
                 
                 # Send response
                 send_start = time.time()

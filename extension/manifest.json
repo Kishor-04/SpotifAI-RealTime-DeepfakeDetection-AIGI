@@ -4,9 +4,9 @@
   "version": "2.0.0",
   "description": "Real-time deepfake detection for YouTube videos using AI ensemble models with frame-by-frame analysis",
   "icons": {
-    "16": "icons/icon48.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon48.png"
+    "16": "icons/favicon.png",
+    "48": "icons/favicon.png",
+    "128": "icons/favicon.png"
   },
   "permissions": [
     "storage",
